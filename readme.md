@@ -8,6 +8,6 @@ Food-yah uses 'Sheetsee.js' to fetch and display all the items/places that have 
 I've manually populated the database, but feel free to add or make amendments or corrections to any of the data.
 
 #credits
- This repo is based on Hackspots . - Credits to Jennifer Lord. - https://github.com/jlord/hack-spots | (https://github.com/jlord/sheetsee.js)
+ This repo is based on Hackspots . - Credits to Jessica Lord. - https://github.com/jlord/hack-spots | (https://github.com/jlord/sheetsee.js)
 
     
