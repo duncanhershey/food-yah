@@ -1,0 +1,256 @@
+<html>
+	<head>
+		<title>food yah!</title>
+		<script type="text/javascript" src="js/ICanHaz.js"></script> 
+		<script type="text/javascript" src='http://api.tiles.mapbox.com/mapbox.js/v1.4.0/mapbox.js'></script>
+		<script type="text/javascript" src='js/jquery.js '></script>
+		<script type="text/javascript" src='js/tabletop.js'></script>
+		<script type="text/javascript" src='js/sheetsee.js'></script>
+		<script type="text/javascript" src='js/leaflet.markercluster.js'></script>
+		<link rel="shortcut icon" href="https://raw.github.com/jlord/hack-spots/master/favico.png"/>
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+		<link href='http://api.tiles.mapbox.com/mapbox.js/v1.4.0/mapbox.css' rel='stylesheet' />
+		<link rel='stylesheet' type='text/css' href='http://fonts.googleapis.com/css?family=Montserrat:400,700'>
+		<link rel='stylesheet' type='text/css' href='http://fonts.googleapis.com/css?family=Arapey'>		
+		<link media="screen" rel="stylesheet" type="text/css" href="css/style.css"> 
+		<link media="screen" rel="stylesheet" type="text/css" href="css/site.css"> 
+		<link rel="stylesheet" href="css/MarkerCluster.css" />
+		<link rel="stylesheet" href="css/MarkerCluster.Default.css" />
+	</head>
+<body>
+	<div id="wrapper">
+		<h1>food yah!</h1>
+			<h3>Collection of restaurants and eating spots in Oxford.</h3>
+		<div>
+			<ul class="nav">
+				<li><strong></strong></li>
+				<li><a href="#info">INFO</a> -</li>
+				<li><a href="http://jlord.github.com/sheetsee.js" target="_blank">POWERED BY SHEETSEE.JS</a> -</li>
+				<li><a href="http://www.github.com/duncanhershey" target="_blank">GITHUB</a> -</li>
+				<li><a href="http://www.twitter.com/hersheyad" target="_blank">@HERSHEYAD</a></li>
+			</ul>
+		</div>
+		<div class="container">
+			<div id="rightSide">
+				<div id="latestSpot"></div>
+				<div id="selectedSpot"></div>
+			</div>
+			<div id="map"></div>
+		</div>
+		<div class="container">
+			<input id="tableFilter" type="text" placeholder="filter by.."></input>
+			<span class="clear button">Clear</span> <span class="resetMap button">Reset Map</span>
+			<span class="noMatches">no matches</span>
+			<div id="hackSpotsTable"></div>
+		</div>
+		<div id="apologies" class="container">
+			<h3>Sorry about the scrolling :-)</h3>
+		</div>
+		<div id="info" class="container">
+			<h3>Changes And Additions</h3>
+			<div id="theNumberofSpots"></div>
+			<p>The data on this site is bound to <a href="https://docs.google.com/spreadsheet/pub?key=0AsWFYZAWY0_SdENhNVZ5OE1lc3lwME1tamw1VVpzbVE#gid=0" target="_blank"> this Google Spreadsheet</a>, because it's public, you can open the spread, and add a new eating spot! or you can simply make any corrections to the existing data if its inacurrate or requires updating. If it's not on the list, go ahead and add it! Bare in mind, you'll need to paste in the <strong>latitude and longitude details</strong> of the spot you're adding, you can easily get this info via; <a href="http://gridreferencefinder.com/" target="_blank">here</a></p> 
+
+			<h3>Eat Oxford</h3>
+			<p>Oxford is crammed with a host of restuarants. Some good ones and yeah, you guessed it some pretty bad ones. Instead of opening multiple tabs and taking an age to decide. You can use this web tool for locating and reviewing multiple resturants in and around Oxford City Center. I've compiled a database of restruants in Oxford which also includes there website URL and tripadvisor URL for ease of use. Feel free to make any neccessary amendments.</p>
+
+			<h3>Code Kudos</h3>
+			<p>This site is based on 'HackSpots' by Jennifer Lord. Data is linked via a google spreadsheet and returned via sheetsee.js. Sheetsee is JavaScript library which Jennifer put together. Sheetsee.js allows a google spread to be hooked onto maps, tables and charts to make data look more eye pleasin' Go and check out her github page for the original project; <a href="https://github.com/jlord/hack-spots" target="_blank"> HackSpots</a>
+		</div>
+	</div><!-- end wrapper -->
+
+	<script id="hackSpotsTable" type="text/html">
+		<table>
+		<tr><th class="tHeader">Name</th><th class="tHeader">Address</th><th class="tHeader">City</th><th class="tHeader">Telephone</th><th class="tHeader">Postcode</th><th class="">Elsewhere</th></tr>
+		  {{#rows}}
+		  	<tr id="{{rowNumber}}" class="spotRow"><td>{{name}}</td><td>{{address}}</td><td>{{city}}</td><td>{{telephone}}</td><td>{{postcode}}</td><td><a class="button" href="https://maps.google.com/maps?q={{address}},{{city}},{{postcode}}" target="_blank">G Map</a> <a class="button" href="http://www.yelp.com/search?find_desc={{name}}&find_loc={{city}},{{postcode}},{{country}}" target="_blank">Yelp</a></td></tr>
+		  	<tr class="hideRow"><td>wifi: {{wifipassword}}</td></tr>
+		  {{/rows}}
+	  </table>
+	</script>
+
+	<script id="latestSpot" type="text/html">
+			{{#rows}}
+				<h4 class="fauxButton">MOST RECENT SPOT</h4>
+				<h2>{{name}}</h2>
+				<p class="colorText">{{address}}<p>
+				<p class="colorText">{{city}}, {{telephone}} {{#postcode}}, {{postcode}} {{/postcode}}</p>
+				<ul>
+			  	<li><span class="category">Website:</span> {{website}}</li>
+			  	<li><span class="category">WiFi:</span> {{wifipassword}}</li>
+			  	<li><span class="category">Tripadvsor</span> {{tripadvisor}}</li>
+			  	<li><span class="category">Contributed By:</span> <a href="http://www.twitter.com/{{contributerstwitter}}" target="_blank">@{{contributerstwitter}}</a></li>
+		  	</ul>
+		  	<ul>
+		  		<li><a href="https://maps.google.com/maps?q={{address}},{{city}},{{postcode}}" target="_blank">View in Google Maps</a></li>
+		  		<li><a href="http://www.yelp.com/search?find_desc={{name}}&find_loc={{city}},{{postcode}},{{country}}" target="_blank">Find on Yelp</a></li>
+		  	</ul>
+		  {{/rows}}
+	</script>
+
+	<script id="theNumberofSpots" type="text/html">
+		<p><strong><span class="red-text">{{numberOfSpots}}</span> hack spots strong!</p>
+	</script>
+
+	<script id="popUps" type="text/html">
+		<h2>{{ name }}</h2>
+	</script>
+
+	<script id="selectedSpot" type="text/html">
+		{{#rows}}
+			<h4 class="fauxButton">SELECTED SPOT</h4>
+			<h2>{{name}}</h2>
+			<p class="colorText">{{address}}<p>
+				<p class="colorText">{{city}}, {{telephone}} {{#postcode}}, {{postcode}} {{/postcode}}</p>
+				<ul>
+			  	<li><span class="category">Website:</span> {{website}}</li>
+			  	<li><span class="category">WiFi:</span> {{wifipassword}}</li>
+			  	<li><span class="category">Tripadvsor</span> {{tripadvisor}}</li>
+	  	</ul>
+	  	<ul>
+	  		<li><a href="https://maps.google.com/maps?q={{address}},{{city}},{{postcode}}" target="_blank">View in Google Maps</a></li>
+	  		<li><a href="http://www.yelp.com/search?find_desc={{name}}&find_loc={{city}},{{postcode}},{{country}}" target="_blank">Find on Yelp</a></li>
+	  	</ul>
+	  {{/rows}}
+	</script>
+
+	<script type="text/javascript">
+	  document.addEventListener('DOMContentLoaded', function() {
+	  	var gData
+	  	var URL = "0AsWFYZAWY0_SdENhNVZ5OE1lc3lwME1tamw1VVpzbVE"
+			Tabletop.init( { key: URL, callback: showInfo, simpleSheet: true } ) 
+		}) 
+
+		// so long, so messy
+
+	  function showInfo(data) {
+	  	gData = data
+	  	// make the table, and the search bar
+	  	Sheetsee.makeTable(gData, "#hackSpotsTable")
+	  	Sheetsee.initiateTableFilter(gData, "#tableFilter", "#hackSpotsTable")
+
+	  	// when someone clicks on a row, highlight it and
+	  	// re-center the map
+	  	$('.spotRow').live("click", function(event) {
+	  		$('.spotRow').removeClass("selectedRow")
+	 			var rowNumber = $(this).closest("tr").attr("id")
+	 			$('#' + rowNumber).addClass("selectedRow")
+	 			var dataElement = Sheetsee.getMatches(gData, rowNumber, "rowNumber")
+	 			var selectedSpot = ich.selectedSpot({
+				  rows: dataElement
+			  })
+			  $('#latestSpot').css("display", "none")
+			  $('#selectedSpot').html(selectedSpot).css("display", "inline")
+			  var selectedCoords = [dataElement[0].lat, dataElement[0].long]
+			  matchGeoJSONbyRowNumber(rowNumber, geoJSON, gData, "#FF4646")
+			  var markerLayer = Sheetsee.addMarkerLayer(geoJSON, map, 13)
+				addPopups(map, markerLayer)
+			  map.panTo(selectedCoords, 13)
+	 		})
+
+	  	// so that the first map and info that loads
+	  	// is complete and doesn't show rows that are
+	  	// actively being edited by folk
+	  	function findLatestCompleteSpot(data) {
+	  		var latestCompleteSpot = []
+	  		var startWithLatestRow = data.reverse()
+	  		startWithLatestRow.forEach(function(row){
+	  			if (!row.lat || !row.long || !row.name || !row.address || !row.city || !row.state ) return
+	  			else latestCompleteSpot.push(row) 
+	  		})
+	  		return latestCompleteSpot[0]
+	  	}
+
+	  	// find the latest spot with the most important
+	  	// info filled in (to prevent map breaking if
+	  	// someone is currently editing spreadsheet)
+	  	var theLatestSpot = findLatestCompleteSpot(gData)
+		  var latestSpot = ich.latestSpot({
+			   rows: theLatestSpot
+		  })
+			$('#latestSpot').html(latestSpot)
+
+			function highlightLastMarker(geoJSON, highlightColor) {
+				geoJSON[0].properties["marker-color"] = highlightColor
+				return geoJSON
+			}
+
+			// create geoJSON with coordinates and other
+			// useful bits from the original data
+			var optionsJSON = ["name", "address", "city", "rowNumber"]
+		  var geoJSONnoHL = Sheetsee.createGeoJSON(gData, optionsJSON)
+		  // change the color of the most recently added spot's marker
+		  var geoJSON = highlightLastMarker(geoJSONnoHL, "#FF4646")
+		  // create map, tilelayer (map background), markers and popups
+			var map = Sheetsee.loadMap("map")
+			Sheetsee.addTileLayer(map, 'duncanh.h668oig6')
+			var markerLayer = Sheetsee.addMarkerLayer(geoJSON, map, 13)
+			addPopups(map, markerLayer)
+
+			// design the popups to have the content and
+			// interactions that we want
+			function addPopups(map, markerLayer) {
+				markerLayer.eachLayer(function(marker) {
+					var popupContent = ich.popUps(marker.feature.opts)
+					marker.bindPopup(popupContent, {closeButton: false,})
+				})
+			  markerLayer.on('click', function(e) {
+			  // clear any selected rows	
+				$('.spotRow').removeClass("selectedRow")
+				// get row number of selected marker
+			  var rowNumber = e.layer.feature.opts.rowNumber.toString()
+			  // find that row in the table and make consider it selected
+			  $('#' + rowNumber).addClass("selectedRow")
+			  // using row number, find that marker in the geoJSON, give it
+			  // the selected marker color
+			  matchGeoJSONbyRowNumber(rowNumber, geoJSON, gData, "#FF4646")
+			 //  var markerLayer = Sheetsee.addMarkerLayer(geoJSON, map, 13)
+				// addPopups(map, markerLayer)
+				// using row number, get the data for the selected spot
+			  var dataElement = Sheetsee.getMatches(gData, rowNumber, "rowNumber")
+			  // take those details and re-write the selected spot section
+				var selectedSpot = ich.selectedSpot({
+				  rows: dataElement
+			 	}) 
+			  $('#latestSpot').css("display", "none")
+			  $('#selectedSpot').html(selectedSpot).css("display", "inline")
+			  })
+			}
+
+			$('.resetMap').click(function() {
+				$('.spotRow').removeClass("selectedRow")
+				markerLayer = Sheetsee.addMarkerLayer(geoJSON, map, 13)
+				addPopups(map, markerLayer)
+				$('#latestSpot').css("display", "inline")
+			  $('#selectedSpot').css("display", "none")
+			})
+
+			// find total number of spots added
+			var numberOfSpots = gData.length
+			var theNumberofSpots = ich.theNumberofSpots({
+		  	numberOfSpots: numberOfSpots
+	 	 	})
+			$('#theNumberofSpots').html(theNumberofSpots)
+
+			function matchGeoJSONbyRowNumber(rowNumber, geoJSON, gdata, highlightColor) {
+		 		geoJSON.forEach(function (d) {
+		 			if (d.properties["marker-color"] === highlightColor) {
+		 				var origColor = gData[0].hexcolor
+		 				d.properties["marker-color"] = origColor
+		 			}
+		    	for (var key in d.opts) {
+		      	var value = d.opts[key].toString().toLowerCase()
+		   			if (key === 'rowNumber' && value.match(rowNumber.toString().toLowerCase())) {
+		     	    d.properties["marker-color"] = highlightColor
+		     	    return geoJSON
+		     		}
+		     	}
+		    })
+	 		}
+
+ 	}
+
+	</script>
+</body>
+</html>
